@@ -7,38 +7,34 @@ class ListBooks extends Component{
             books:props.books
         }
     }
+    shouldComponentUpdate(nextProps,nextState){
+        return (nextProps.books!==this.props.books);
+    }
     render(){
-        const books=this.props.books;
-
-        let booksShelves=[
-        {
-            currentlyReading: books.filter((book) => book.shelf === 'currentlyReading')
-        },{
-            wantToRead: books.filter((book) => book.shelf === 'wantToRead')
-        },{
-            read: books.filter((book) => book.shelf === 'read')
-        }];
-
+        const {books}=this.props;
         let shelves = [{
             name: 'currentlyReading',
-            title: 'Currently Reading'
+            title: 'Currently Reading',
+            currentlyReading: books.filter((book) => book.shelf === 'currentlyReading')
         }, {
             name: 'wantToRead',
-            title: 'Want To Read'
+            title: 'Want To Read',
+            wantToRead: books.filter((book) => book.shelf === 'wantToRead')
         }, {
             name: 'read',
-            title: 'Read'
+            title: 'Read',
+            read: books.filter((book) => book.shelf === 'read')
         }];
 
         return (
             <div>
-                {shelves.map((shelf,index)=>(
+                {shelves.map((shelf)=>(
                     <div key={shelf.name} className="bookshelf">
                         <h2 className="bookshelf-title">{shelf.title}</h2>
                         <div className="bookshelf-books">
                             {books.length!==0 && (
                                 <ol className="books-grid">
-                                    {booksShelves[index][shelf.name].map((book) => (
+                                    {shelf[shelf.name].map((book) => (
                                         <li key={book.id}>
                                             <div className="book">
                                                 <div className="book-top">
@@ -60,7 +56,6 @@ class ListBooks extends Component{
                                     ))}
                                 </ol>
                             )}
-                            
                         </div>
                     </div>
                 ))}
