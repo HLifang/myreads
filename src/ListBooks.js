@@ -1,6 +1,12 @@
 import React,{ Component } from 'react';
+import PropTypes from 'prop-types';
+
 
 class ListBooks extends Component{
+    static propTypes={
+        books:PropTypes.array.isRequired
+    }
+
     constructor(props){
         super(props);
         this.handleChange=this.handleChange.bind(this);
@@ -36,7 +42,7 @@ class ListBooks extends Component{
         })
     }
     handleChange(book,e){
-        let newBooks=this.state.books.filter((bk,item,array)=>{
+        const newBooks=this.state.books.filter((bk,item,array)=>{
             if(bk.title===book.title) bk.shelf=e.target.value;
             return array;
         }); 
@@ -45,9 +51,9 @@ class ListBooks extends Component{
         });
     }
     render(){
-        let {books,shelves}=this.state;
+        const {books,shelves}=this.state;
 
-        let categories={
+        const categories={
             currentlyReading:books.filter((book) => book.shelf === 'currentlyReading'),
             wantToRead:books.filter((book) => book.shelf === 'wantToRead'),
             read:books.filter((book) => book.shelf === 'read')
