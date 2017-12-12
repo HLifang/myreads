@@ -3,44 +3,72 @@ import React,{ Component } from 'react';
 class ListBooks extends Component{
     constructor(props){
         super(props);
+        this.handleChange=this.handleChange.bind(this);
+       
         this.state={
-            books:props.books
-        }
+            books:props.books,
+            shelves:[{
+                name: 'currentlyReading',
+                title: 'Currently Reading'
+            },{
+                name: 'wantToRead',
+                title: 'Want To Read'
+            },{
+                name: 'read',
+                title: 'Read'
+            }]
+        };
     }
+
+    componentDidMount(){
+        this.setState({
+            books:this.props.books
+        });
+    }
+
     shouldComponentUpdate(nextProps,nextState){
-        return (nextProps.books!==this.props.books);
+        return (nextProps.books!==this.state.books);
+    }
+
+    componentWillReceiveProps(nextProps){
+        this.setState({
+            books:nextProps.books
+        })
+    }
+    handleChange(book,e){
+        let newBooks=this.state.books.filter((bk,item,array)=>{
+            if(bk.title===book.title) bk.shelf=e.target.value;
+            return array;
+        }); 
+        this.setState({
+            books:newBooks
+        });
     }
     render(){
-        const {books}=this.props;
-        let shelves = [{
-            name: 'currentlyReading',
-            title: 'Currently Reading',
-            currentlyReading: books.filter((book) => book.shelf === 'currentlyReading')
-        }, {
-            name: 'wantToRead',
-            title: 'Want To Read',
-            wantToRead: books.filter((book) => book.shelf === 'wantToRead')
-        }, {
-            name: 'read',
-            title: 'Read',
-            read: books.filter((book) => book.shelf === 'read')
-        }];
+        let {books,shelves}=this.state;
+
+        let categories={
+            currentlyReading:books.filter((book) => book.shelf === 'currentlyReading'),
+            wantToRead:books.filter((book) => book.shelf === 'wantToRead'),
+            read:books.filter((book) => book.shelf === 'read')
+        }; 
 
         return (
             <div>
-                {shelves.map((shelf)=>(
-                    <div key={shelf.name} className="bookshelf">
-                        <h2 className="bookshelf-title">{shelf.title}</h2>
-                        <div className="bookshelf-books">
-                            {books.length!==0 && (
+                {books.length!==0 && (
+                    <div>
+                        {shelves.map((shelf)=>(
+                        <div key={shelf.name} className="bookshelf">
+                            <h2 className="bookshelf-title">{shelf.title}</h2>
+                            <div className="bookshelf-books">
                                 <ol className="books-grid">
-                                    {shelf[shelf.name].map((book) => (
+                                    {categories[shelf.name].map((book) => (
                                         <li key={book.id}>
                                             <div className="book">
                                                 <div className="book-top">
                                                     <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${book.imageLinks.thumbnail})` }}></div>
                                                     <div className="book-shelf-changer">
-                                                        <select>
+                                                        <select defaultValue={shelf.name} onChange={(e)=>this.handleChange(book,e)}>
                                                             <option value="none" disabled>Move to...</option>
                                                             <option value="currentlyReading">Currently Reading</option>
                                                             <option value="wantToRead">Want to Read</option>
@@ -55,10 +83,11 @@ class ListBooks extends Component{
                                         </li>
                                     ))}
                                 </ol>
-                            )}
+                            </div>
                         </div>
+                        ))}
                     </div>
-                ))}
+                )}
             </div>
         )
     }
