@@ -1,5 +1,7 @@
 import React,{ Component } from 'react';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import Title from './Title';
 
 
 class ListBooks extends Component{
@@ -65,7 +67,7 @@ class ListBooks extends Component{
                     <div>
                         {shelves.map((shelf)=>(
                         <div key={shelf.name} className="bookshelf">
-                            <h2 className="bookshelf-title">{shelf.title}</h2>
+                            <Title title={shelf.title}/>
                             <div className="bookshelf-books">
                                 <ol className="books-grid">
                                     {categories[shelf.name].map((book) => (
@@ -94,6 +96,9 @@ class ListBooks extends Component{
                         ))}
                     </div>
                 )}
+                <div className="open-search">
+                    <Link to="/search">Add a book</Link>
+                </div>
             </div>
         )
     }
