@@ -126,6 +126,9 @@ body, .app {
 .book-authors {
   font-size: 0.8em;
 }
+.book-authors p{
+  margin:0;
+}
 .book-title {
   margin-top: 10px;
 }

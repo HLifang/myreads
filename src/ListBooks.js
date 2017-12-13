@@ -54,6 +54,7 @@ class ListBooks extends Component{
     }
     render(){
         const {books,shelves}=this.state;
+        console.log(books);
 
         const categories={
             currentlyReading:books.filter((book) => book.shelf === 'currentlyReading'),
@@ -76,7 +77,7 @@ class ListBooks extends Component{
                                                 <div className="book-top">
                                                     <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${book.imageLinks.thumbnail})` }}></div>
                                                     <div className="book-shelf-changer">
-                                                        <select defaultValue={shelf.name} onChange={(e)=>this.handleChange(book,e)}>
+                                                        <select defaultValue={book.shelf} onChange={(e)=>this.handleChange(book,e)}>
                                                             <option value="none" disabled>Move to...</option>
                                                             <option value="currentlyReading">Currently Reading</option>
                                                             <option value="wantToRead">Want to Read</option>
@@ -86,7 +87,12 @@ class ListBooks extends Component{
                                                     </div>
                                                 </div>
                                                 <div className="book-title">{book.title}</div>
-                                                <div className="book-authors">{book.authors}</div>
+                                                <div className="book-authors">
+                                                    {book.authors.map((author)=>(
+                                                        <p key={author}>{author}</p>
+                                                    ))}
+                                                    
+                                                </div>
                                             </div>
                                         </li>
                                     ))}
