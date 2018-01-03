@@ -36,7 +36,6 @@ class ListBooks extends Component{
         })
     }
     updateBook=(book,e)=>{
-        console.log(book.id);
         const newBooks=[...this.state.books];
         newBooks.forEach((bk)=>{
             if(bk.title===book.title){
@@ -46,7 +45,7 @@ class ListBooks extends Component{
         this.setState({
             books:newBooks
         });
-        BooksAPI.update(book.id,newBooks);
+        BooksAPI.update(book.id,e.target.value);
     }
 
     splitTitle=(str)=>{
@@ -55,7 +54,6 @@ class ListBooks extends Component{
 
     render(){
         const {books,shelves}=this.state;
-        console.log(books);
 
         const categories={
             currentlyReading:books.filter((book) => book.shelf === 'currentlyReading'),

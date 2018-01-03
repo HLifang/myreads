@@ -7,46 +7,63 @@ class SearchBook extends Component{
   constructor(props){
     super(props);
 
+    this.updateBook=this.updateBook.bind(this);
+
     this.state={
       books:[],
       query:''
     }
   }
 
-  searchBook=(query)=>{
+  updateQuery=(query)=>{
     this.setState({
       query:query.trim()
     });
+  }
 
-    BooksAPI.search(query).then((books)=>{
-      console.log('search books number',books.length);
-      if(books && books.length>0){
-        this.setState({
-          books:books
-        })
-      }
-      
-    });
+  searchBook=(keycode)=>{
+    const {query}=this.state;
+
+    if(keycode===13){
+      BooksAPI.search(query).then((books)=>{
+        if(books && books.length>0){
+          this.setState({
+            books:books
+          })
+        }else{
+          this.setState({
+            books:[]
+          });
+        }
+      });
+    }
   }
 
   updateBook(book,e){
-    console.log('books',this.state.books);
+    if(!book.shelf){
+      Object.defineProperty(book,'shelf',{
+        writable:true,
+        value:e.target.value
+      });
+    }else{
+      book.shelf=e.target.value;
+    }
+    
     const newBooks=[...this.state.books];
 
     newBooks.forEach((bk)=>{
       if(bk.title===book.title){
-        bk.shelf=e.target.value;
+        bk=book;
       }
     });
     this.setState({
       books:newBooks
     });
-    BooksAPI.update(book.id,newBooks);
+    BooksAPI.update(book.id,e.target.value);
   }
 
   render(){
     const {books,query}=this.state;
-    console.log(books);
 
     return (
         <div className="search-books">
@@ -54,12 +71,12 @@ class SearchBook extends Component{
           <Link to="/" className="close-search">Close</Link>
           <div className="search-books-input-wrapper">
             <input type="text" placeholder="Search by title or author" 
-              value={query} onChange={(e)=>this.searchBook(e.target.value)}/>
+              value={query} onChange={(e)=>this.updateQuery(e.target.value)} onKeyUp={(e)=>this.searchBook(e.keyCode)}/>
           </div>
         </div>
 
         <div className="search-books-results">
-            {books.length !==0 &&(
+            {books && books.length !==0 &&(
               <ol className="books-grid">
                 {books.map((book)=>(
                   <Book key={book.id} book={book} onChangeBook={this.updateBook}/>
