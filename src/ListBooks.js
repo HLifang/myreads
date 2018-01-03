@@ -1,7 +1,9 @@
 import React,{ Component } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import * as BooksAPI from './BooksAPI';
 import Title from './Title';
+import Book from './Book';
 
 
 class ListBooks extends Component{
@@ -11,20 +13,10 @@ class ListBooks extends Component{
 
     constructor(props){
         super(props);
-        this.handleChange=this.handleChange.bind(this);
-       
+
         this.state={
             books:props.books,
-            shelves:[{
-                name: 'currentlyReading',
-                title: 'Currently Reading'
-            },{
-                name: 'wantToRead',
-                title: 'Want To Read'
-            },{
-                name: 'read',
-                title: 'Read'
-            }]
+            shelves:['currentlyReading','wantToRead','read']
         };
     }
 
@@ -43,15 +35,24 @@ class ListBooks extends Component{
             books:nextProps.books
         })
     }
-    handleChange(book,e){
-        const newBooks=this.state.books.filter((bk,item,array)=>{
-            if(bk.title===book.title) bk.shelf=e.target.value;
-            return array;
-        }); 
+    updateBook=(book,e)=>{
+        console.log(book.id);
+        const newBooks=[...this.state.books];
+        newBooks.forEach((bk)=>{
+            if(bk.title===book.title){
+                bk.shelf=e.target.value;
+            }
+        });
         this.setState({
             books:newBooks
         });
+        BooksAPI.update(book.id,newBooks);
     }
+
+    splitTitle=(str)=>{
+        return str.replace(/([A-Z][a-z])/g, ' $1').replace(/\b\w/g,(s)=>s.toUpperCase());
+    }
+
     render(){
         const {books,shelves}=this.state;
         console.log(books);
@@ -67,34 +68,12 @@ class ListBooks extends Component{
                 {books.length!==0 && (
                     <div>
                         {shelves.map((shelf)=>(
-                        <div key={shelf.name} className="bookshelf">
-                            <Title title={shelf.title}/>
+                        <div key={shelf} className="bookshelf">
+                            <Title title={this.splitTitle(shelf)}/>
                             <div className="bookshelf-books">
                                 <ol className="books-grid">
-                                    {categories[shelf.name].map((book) => (
-                                        <li key={book.id}>
-                                            <div className="book">
-                                                <div className="book-top">
-                                                    <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${book.imageLinks.thumbnail})` }}></div>
-                                                    <div className="book-shelf-changer">
-                                                        <select defaultValue={book.shelf} onChange={(e)=>this.handleChange(book,e)}>
-                                                            <option value="none" disabled>Move to...</option>
-                                                            <option value="currentlyReading">Currently Reading</option>
-                                                            <option value="wantToRead">Want to Read</option>
-                                                            <option value="read">Read</option>
-                                                            <option value="none">None</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div className="book-title">{book.title}</div>
-                                                <div className="book-authors">
-                                                    {book.authors.map((author)=>(
-                                                        <p key={author}>{author}</p>
-                                                    ))}
-                                                    
-                                                </div>
-                                            </div>
-                                        </li>
+                                    {categories[shelf].map((book) => (
+                                        <Book key={book.id} book={book} onChangeBook={this.updateBook}/>
                                     ))}
                                 </ol>
                             </div>
