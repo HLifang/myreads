@@ -1,9 +1,14 @@
 import React,{ Component } from 'react';
 import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import * as BooksAPI from './BooksAPI';
 import Book from './Book';
 
 class SearchBook extends Component{
+  static propTypes={
+    books:PropTypes.array.isRequired
+  }
+
   constructor(props){
     super(props);
 
@@ -11,8 +16,15 @@ class SearchBook extends Component{
 
     this.state={
       books:[],
+      shelfBooks:props.books,
       query:''
     }
+  }
+
+  componentWillReceiveProps(nextProps){
+    this.setState({
+      shelfBooks:nextProps.books
+    })
   }
 
   updateQuery=(query)=>{
@@ -22,22 +34,26 @@ class SearchBook extends Component{
   }
 
   searchBook=(keycode)=>{
-    const {query}=this.state;
+    const {query,shelfBooks}=this.state;
 
     if(keycode===13){
       BooksAPI.search(query).then((books)=>{
-        if(books && books.length>0){
-          this.setState({
-            books:books
-          })
-        }else{
-          this.setState({
-            books:[]
+        console.log('shelfBooks',shelfBooks);
+        books.forEach((book)=>{
+          shelfBooks.forEach((shelfBook)=>{
+            if(book.id===shelfBook.id){
+              book.shelf=shelfBook.shelf;
+            }
           });
-        }
+        });
+
+        this.setState({
+          books:(books && books.length>0) ? books:[]
+        });
       });
     }
   }
+
 
   updateBook(book,e){
     if(!book.shelf){
@@ -59,7 +75,7 @@ class SearchBook extends Component{
     this.setState({
       books:newBooks
     });
-    BooksAPI.update(book.id,e.target.value);
+    BooksAPI.update(book,e.target.value);
   }
 
   render(){

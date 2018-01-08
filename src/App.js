@@ -7,9 +7,13 @@ import SearchBook from './SearchBook'
 import './App.css'
 
 class BooksApp extends React.Component {
-  state = {
-    books:[]
+
+  constructor(props){
+    super(props);
+    //this.updateResut=this.updateResut.bind(this);
+    this.state={books:[]};
   }
+
   componentDidMount(){
     BooksAPI.getAll().then((books)=>{
       this.setState({
@@ -32,9 +36,10 @@ class BooksApp extends React.Component {
           </div>
         )}/>
         <Route path="/search" render={({history})=>(
-          <SearchBook onSearch={(book)=>{
-            history.push('/');
-          }}/>
+          // <SearchBook books={this.state.books} onSearch={()=>{
+          //   history.push('/');
+          // }}/>
+          <SearchBook books={this.state.books} />
         )}/>
       </div>
     )

@@ -27,7 +27,7 @@ class ListBooks extends Component{
     }
 
     shouldComponentUpdate(nextProps,nextState){
-        return (nextProps.books!==this.state.books);
+        return (this.state.books !== nextState.books);
     }
 
     componentWillReceiveProps(nextProps){
@@ -39,13 +39,13 @@ class ListBooks extends Component{
         const newBooks=[...this.state.books];
         newBooks.forEach((bk)=>{
             if(bk.title===book.title){
-                bk.shelf=e.target.value;
+                bk.shelf=book;
             }
         });
         this.setState({
             books:newBooks
         });
-        BooksAPI.update(book.id,e.target.value);
+        BooksAPI.update(book,e.target.value);
     }
 
     splitTitle=(str)=>{
