@@ -10,7 +10,6 @@ class BooksApp extends React.Component {
 
   constructor(props){
     super(props);
-    //this.updateResut=this.updateResut.bind(this);
     this.state={books:[]};
   }
 
@@ -20,6 +19,13 @@ class BooksApp extends React.Component {
         books:books
       })
     })
+  }
+
+  onUpdate(book){
+    const {books}=this.state;
+    const newBooks=books.filter((bk)=>bk.id!==book.id);
+    newBooks.push(book);
+    this.setState({books:newBooks});
   }
 
   render() {
@@ -36,10 +42,7 @@ class BooksApp extends React.Component {
           </div>
         )}/>
         <Route path="/search" render={({history})=>(
-          // <SearchBook books={this.state.books} onSearch={()=>{
-          //   history.push('/');
-          // }}/>
-          <SearchBook books={this.state.books} />
+          <SearchBook books={this.state.books} changeBook={(book)=>this.onUpdate(book)} />
         )}/>
       </div>
     )

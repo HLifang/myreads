@@ -6,7 +6,8 @@ import Book from './Book';
 
 class SearchBook extends Component{
   static propTypes={
-    books:PropTypes.array.isRequired
+    books:PropTypes.array.isRequired,
+    changeBook:PropTypes.func.isRequired
   }
 
   constructor(props){
@@ -38,7 +39,6 @@ class SearchBook extends Component{
 
     if(keycode===13){
       BooksAPI.search(query).then((books)=>{
-        console.log('shelfBooks',shelfBooks);
         books.forEach((book)=>{
           shelfBooks.forEach((shelfBook)=>{
             if(book.id===shelfBook.id){
@@ -54,7 +54,6 @@ class SearchBook extends Component{
     }
   }
 
-
   updateBook(book,e){
     if(!book.shelf){
       Object.defineProperty(book,'shelf',{
@@ -65,6 +64,8 @@ class SearchBook extends Component{
       book.shelf=e.target.value;
     }
     
+    this.props.changeBook(book);
+
     const newBooks=[...this.state.books];
 
     newBooks.forEach((bk)=>{
