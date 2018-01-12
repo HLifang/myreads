@@ -38,8 +38,8 @@ class ListBooks extends Component{
     updateBook=(book,e)=>{
         const newBooks=[...this.state.books];
         newBooks.forEach((bk)=>{
-            if(bk.title===book.title){
-                bk.shelf=book;
+            if(bk.id===book.id){
+                bk.shelf=e.target.value;
             }
         });
         this.setState({
